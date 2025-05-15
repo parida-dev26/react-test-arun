@@ -2,26 +2,27 @@ import React, { useEffect, useState } from "react";
 import UserCard from "../components/UserCard";
 import Pagination from "../components/Pagination";
 
-const USERS_PER_PAGE = 6;
+const POSTS_PER_PAGE = 6;
 
 function Dashboard() {
-  const [users, setUsers] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
+    fetch("https://jsonplaceholder.typicode.com/posts/")
       .then((res) => res.json())
-      .then((data) => setUsers(data));
+      .then((data) => setPosts(data))
+      .catch((error) => console.error("Failed to fetch posts:", error));
   }, []);
 
-  const filteredUsers = users.filter((user) =>
-    user.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredPosts = posts.filter((post) =>
+    post.title?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const indexOfLast = currentPage * USERS_PER_PAGE;
-  const indexOfFirst = indexOfLast - USERS_PER_PAGE;
-  const currentUsers = filteredUsers.slice(indexOfFirst, indexOfLast);
+  const indexOfLast = currentPage * POSTS_PER_PAGE;
+  const indexOfFirst = indexOfLast - POSTS_PER_PAGE;
+  const currentPosts = filteredPosts.slice(indexOfFirst, indexOfLast);
 
   return (
     <>
@@ -36,13 +37,13 @@ function Dashboard() {
         }}
       />
       <div className="row">
-        {currentUsers.map((user) => (
-          <UserCard key={user.id} user={user} />
+        {currentPosts.map((post) => (
+          <UserCard key={post.id} post={post} />
         ))}
       </div>
       <Pagination
-        totalUsers={filteredUsers.length}
-        usersPerPage={USERS_PER_PAGE}
+        totalUsers={filteredPosts.length}
+        usersPerPage={POSTS_PER_PAGE}
         setCurrentPage={setCurrentPage}
         currentPage={currentPage}
       />
